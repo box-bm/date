@@ -267,7 +267,7 @@
     <!-- ===== PASO 1: La pregunta ===== -->
     <section id="step-ask">
       <span class="emoji-big" id="askEmoji">🥺</span>
-      <h1 id="askTitle">¿Quieres salir conmigo?</h1>
+      <h1 id="askTitle">Litzy, ¿quieres salir conmigo?</h1>
       <p class="subtitle" id="askSubtitle">Piénsalo bien... 💕</p>
       <div class="buttons">
         <button class="btn-yes" id="btnYes">¡Sí! 💖</button>
@@ -278,7 +278,7 @@
     <!-- ===== PASO 2: El formulario ===== -->
     <section id="step-form" class="hidden">
       <span class="emoji-big">🎉</span>
-      <h1>¡Yuju! 🥳</h1>
+      <h1>¡Yuju, Litzy! 🥳</h1>
       <p class="subtitle">Ahora elige cuándo nos vemos 👇</p>
       <form id="dateForm">
         <label for="fecha">📅 Fecha</label>
@@ -359,7 +359,11 @@
     "Te invito a las que quieras 🍿",
     "Di que sí y te hago reír todo el día 😄",
     "No aceptaré un no por respuesta 💪",
-    "¿Tantito? Aunque sea de prueba 🥹"
+    "¿Tantito? Aunque sea de prueba 🥹",
+    "Litzy, porfa 🥺",
+    "Pero si eres tú, Litzy 💕",
+    "Anda Litzy, di que sí 🙏",
+    "Litzy, mi corazón depende de esto 💔"
   ];
 
   const sadEmojis = ["😢","😭","💔","🥺","😞","😔","😟","😿","🙁","☹️","😩","😫","🥹"];
@@ -527,7 +531,7 @@
     const hora = params.get("hora");
     if (fecha && hora) {
       const lugar = params.get("lugar") || "";
-      document.getElementById("inviteTitle").textContent = "¡Estás invitada! 💌";
+      document.getElementById("inviteTitle").textContent = "¡Litzy, estás invitada! 💌";
       document.getElementById("inviteSubtitle").textContent = "Alguien especial quiere verte 💕";
       renderInvitation(fecha, hora, lugar, location.href);
       showStep("step-invite");

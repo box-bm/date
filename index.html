@@ -531,8 +531,8 @@
     const hora = params.get("hora");
     if (fecha && hora) {
       const lugar = params.get("lugar") || "";
-      document.getElementById("inviteTitle").textContent = "¡Litzy, estás invitada! 💌";
-      document.getElementById("inviteSubtitle").textContent = "Alguien especial quiere verte 💕";
+      document.getElementById("inviteTitle").textContent = "¡Es una cita! 💌";
+      document.getElementById("inviteSubtitle").textContent = "Aquí están los detalles 💕";
       renderInvitation(fecha, hora, lugar, location.href);
       showStep("step-invite");
       launchHearts(40);

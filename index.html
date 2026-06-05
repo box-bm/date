@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>¿Quieres salir conmigo?</title>
+<style>
+  :root {
+    --pink: #ff5d8f;
+    --pink-dark: #e23e6f;
+    --bg1: #ffe0ec;
+    --bg2: #ffd1e8;
+    --text: #5a2a3a;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    height: 100%;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: linear-gradient(135deg, var(--bg1), var(--bg2));
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+    padding: 24px;
+    overflow-x: hidden;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 28px;
+    box-shadow: 0 20px 60px rgba(226, 62, 111, 0.25);
+    padding: 40px 32px;
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin: 0 0 8px;
+    line-height: 1.2;
+  }
+
+  .subtitle {
+    margin: 0 0 28px;
+    opacity: 0.7;
+    font-size: 1rem;
+  }
+
+  .emoji-big {
+    font-size: 4rem;
+    margin-bottom: 12px;
+    display: block;
+    animation: bounce 1.2s ease-in-out infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    position: relative;
+    min-height: 64px;
+  }
+
+  button {
+    font-family: inherit;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 50px;
+    padding: 14px 32px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .btn-yes {
+    background: var(--pink);
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(255, 93, 143, 0.5);
+  }
+
+  .btn-yes:hover {
+    transform: scale(1.08);
+  }
+
+  .btn-no {
+    background: #eee;
+    color: #888;
+  }
+
+  /* cuando el botón "no" empieza a huir */
+  .btn-no.runaway {
+    position: fixed;
+    z-index: 5;
+    transition: top 0.25s ease, left 0.25s ease;
+  }
+
+  form {
+    text-align: left;
+    margin-top: 8px;
+  }
+
+  label {
+    display: block;
+    font-weight: 600;
+    margin: 16px 0 6px;
+    font-size: 0.95rem;
+  }
+
+  input {
+    width: 100%;
+    font-family: inherit;
+    font-size: 1rem;
+    padding: 12px 14px;
+    border: 2px solid #f0c8d8;
+    border-radius: 14px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  input:focus { border-color: var(--pink); }
+
+  .btn-full {
+    width: 100%;
+    margin-top: 24px;
+    background: var(--pink);
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(255, 93, 143, 0.5);
+  }
+
+  .invitation {
+    text-align: center;
+  }
+
+  .invitation .detail {
+    background: var(--bg1);
+    border-radius: 18px;
+    padding: 18px;
+    margin: 18px 0;
+    font-size: 1.1rem;
+  }
+
+  .invitation .detail strong { display: block; font-size: 1.4rem; margin-top: 4px; }
+
+  .share-box {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .share-box input {
+    flex: 1;
+    font-size: 0.85rem;
+    background: #faf2f6;
+  }
+
+  .copy-btn {
+    background: var(--pink);
+    color: #fff;
+    padding: 12px 18px;
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+
+  .share-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .share-actions a {
+    text-decoration: none;
+    flex: 1;
+    min-width: 130px;
+  }
+
+  .btn-wa {
+    background: #25d366;
+    color: #fff;
+    width: 100%;
+  }
+
+  .btn-secondary {
+    background: #eee;
+    color: #555;
+    width: 100%;
+  }
+
+  .hidden { display: none; }
+
+  /* Corazones que estallan al decir que sí */
+  .hearts {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .hearts span {
+    position: absolute;
+    bottom: -40px;
+    font-size: 1.5rem;
+    animation: float-up linear forwards;
+  }
+
+  @keyframes float-up {
+    to { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* Fondo permanente con muchos corazones en paralaje */
+  .bg-hearts {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  .bg-hearts span {
+    position: absolute;
+    top: -10vh;
+    will-change: transform;
+    animation: drift linear infinite;
+    opacity: 0.85;
+  }
+
+  /* Tres capas con velocidades distintas = efecto paralaje */
+  .bg-hearts .layer-back  { font-size: 1rem;   opacity: 0.45; filter: blur(0.6px); }
+  .bg-hearts .layer-mid   { font-size: 1.6rem; opacity: 0.65; }
+  .bg-hearts .layer-front { font-size: 2.4rem; opacity: 0.85; }
+
+  @keyframes drift {
+    0%   { transform: translateY(-10vh) translateX(0)      rotate(0deg); }
+    50%  { transform: translateY(55vh)  translateX(var(--sway, 20px)) rotate(180deg); }
+    100% { transform: translateY(120vh) translateX(0)      rotate(360deg); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bg-hearts span { animation: none; opacity: 0.25; }
+  }
+</style>
+</head>
+<body>
+  <div class="bg-hearts" id="bgHearts"></div>
+  <div class="hearts" id="hearts"></div>
+
+  <div class="card">
+    <!-- ===== PASO 1: La pregunta ===== -->
+    <section id="step-ask">
+      <span class="emoji-big" id="askEmoji">🥺</span>
+      <h1 id="askTitle">¿Quieres salir conmigo?</h1>
+      <p class="subtitle" id="askSubtitle">Piénsalo bien... 💕</p>
+      <div class="buttons">
+        <button class="btn-yes" id="btnYes">¡Sí! 💖</button>
+        <button class="btn-no" id="btnNo">No</button>
+      </div>
+    </section>
+
+    <!-- ===== PASO 2: El formulario ===== -->
+    <section id="step-form" class="hidden">
+      <span class="emoji-big">🎉</span>
+      <h1>¡Yuju! 🥳</h1>
+      <p class="subtitle">Ahora elige cuándo nos vemos 👇</p>
+      <form id="dateForm">
+        <label for="fecha">📅 Fecha</label>
+        <input type="date" id="fecha" required />
+        <label for="hora">⏰ Hora</label>
+        <input type="time" id="hora" required />
+        <label for="lugar">📍 Lugar (opcional)</label>
+        <input type="text" id="lugar" placeholder="Ej. nuestro café favorito" />
+        <button type="submit" class="btn-full">Crear invitación ✨</button>
+      </form>
+    </section>
+
+    <!-- ===== PASO 3: La invitación ===== -->
+    <section id="step-invite" class="hidden">
+      <div class="invitation">
+        <span class="emoji-big">💌</span>
+        <h1 id="inviteTitle">¡Es una cita!</h1>
+        <p class="subtitle" id="inviteSubtitle">Aquí están los detalles 💕</p>
+
+        <div class="detail">📅 <strong id="outFecha"></strong></div>
+        <div class="detail">⏰ <strong id="outHora"></strong></div>
+        <div class="detail" id="lugarBox">📍 <strong id="outLugar"></strong></div>
+
+        <label for="shareLink" style="text-align:center; font-weight:600;">🔗 Comparte este link:</label>
+        <div class="share-box">
+          <input type="text" id="shareLink" readonly />
+          <button class="copy-btn" id="copyBtn">Copiar</button>
+        </div>
+
+        <div class="share-actions">
+          <a id="waLink" target="_blank" rel="noopener"><button class="btn-wa">Compartir por WhatsApp 💬</button></a>
+        </div>
+        <div class="share-actions">
+          <a href="?" ><button class="btn-secondary">Crear otra ↺</button></a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+<script>
+  // ---------- Frases para el botón "No" ----------
+  const noPhrases = [
+    "¿Por qué no? 🥺",
+    "¿Acaso no quieres? 😢",
+    "Piénsalo otra vez 😞",
+    "¿Segura? 💔",
+    "No seas malita 🥹",
+    "Mi corazón... 😭",
+    "Dame una oportunidad 😔",
+    "¿Ni un poquito? 🙏",
+    "Te vas a arrepentir 😿",
+    "Porfa porfa porfa 🥺",
+    "¿De verdad no? 😩",
+    "Estoy llorando 😢",
+    "Reconsidéralo 💧",
+    "¿Y si te invito un helado? 🍦",
+    "Última oportunidad 😰",
+    "No me hagas esto 😖",
+    "Mira esta carita 🥹",
+    "Vamos, di que sí 🙈",
+    "¿En serio me dirás que no? 😣",
+    "Te prometo que la pasaremos bien 🥲",
+    "Pero si hacemos linda pareja 😳",
+    "El botón del no no sirve 😜",
+    "Inténtalo de nuevo... con el Sí 😅",
+    "Voy a seguir preguntando 😌",
+    "¿Qué tal un café entonces? ☕",
+    "Te llevo flores, lo prometo 🌹",
+    "No te dejaré escapar tan fácil 🏃‍♀️",
+    "Un ratito nada más, ¿va? 🥺",
+    "Mi gato también te lo pide 🐱",
+    "Hasta las estrellas quieren que digas sí ✨",
+    "Le doy más a la izquierda... ¿sí ahora? 👀",
+    "Plis plis plis con cereza encima 🍒",
+    "¿Y si te escribo un poema? 📝",
+    "Cambia de opinión, anda 🙃",
+    "Ese botón está descompuesto, usa el otro 🔧",
+    "Te invito a las que quieras 🍿",
+    "Di que sí y te hago reír todo el día 😄",
+    "No aceptaré un no por respuesta 💪",
+    "¿Tantito? Aunque sea de prueba 🥹"
+  ];
+
+  const sadEmojis = ["😢","😭","💔","🥺","😞","😔","😟","😿","🙁","☹️","😩","😫","🥹"];
+
+  let noCount = 0;
+  const btnNo = document.getElementById("btnNo");
+  const btnYes = document.getElementById("btnYes");
+  const askEmoji = document.getElementById("askEmoji");
+  const askTitle = document.getElementById("askTitle");
+
+  function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+  function moveNoButton() {
+    btnNo.classList.add("runaway");
+    const w = btnNo.offsetWidth;
+    const h = btnNo.offsetHeight;
+    const maxLeft = window.innerWidth - w - 20;
+    const maxTop = window.innerHeight - h - 20;
+    const left = Math.max(20, Math.random() * maxLeft);
+    const top = Math.max(20, Math.random() * maxTop);
+    btnNo.style.left = left + "px";
+    btnNo.style.top = top + "px";
+  }
+
+  function teaseOnNo() {
+    noCount++;
+    moveNoButton();
+    btnNo.textContent = pick(noPhrases);
+    askEmoji.textContent = pick(sadEmojis);
+    // el botón Sí crece un poquito para tentar
+    const scale = Math.min(1 + noCount * 0.08, 2.2);
+    btnYes.style.transform = "scale(" + scale + ")";
+  }
+
+  // El botón huye al pasar el mouse y también al intentar tocarlo (móvil)
+  btnNo.addEventListener("mouseover", teaseOnNo);
+  btnNo.addEventListener("click", teaseOnNo);
+  btnNo.addEventListener("touchstart", function (e) { e.preventDefault(); teaseOnNo(); }, { passive: false });
+
+  // ---------- Botón "Sí" ----------
+  btnYes.addEventListener("click", function () {
+    launchHearts(30);
+    showStep("step-form");
+  });
+
+  // ---------- Navegación entre pasos ----------
+  function showStep(id) {
+    ["step-ask", "step-form", "step-invite"].forEach(function (s) {
+      document.getElementById(s).classList.toggle("hidden", s !== id);
+    });
+  }
+
+  // ---------- Formulario ----------
+  document.getElementById("dateForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const fecha = document.getElementById("fecha").value;
+    const hora = document.getElementById("hora").value;
+    const lugar = document.getElementById("lugar").value.trim();
+
+    const params = new URLSearchParams({ fecha: fecha, hora: hora });
+    if (lugar) params.set("lugar", lugar);
+
+    const url = location.origin + location.pathname + "?" + params.toString();
+    renderInvitation(fecha, hora, lugar, url);
+    showStep("step-invite");
+    launchHearts(40);
+  });
+
+  // ---------- Render de la invitación ----------
+  function formatFecha(fechaStr) {
+    if (!fechaStr) return "";
+    const d = new Date(fechaStr + "T00:00:00");
+    return d.toLocaleDateString("es-MX", {
+      weekday: "long", year: "numeric", month: "long", day: "numeric"
+    });
+  }
+
+  function formatHora(horaStr) {
+    if (!horaStr) return "";
+    const [h, m] = horaStr.split(":");
+    const d = new Date();
+    d.setHours(+h, +m);
+    return d.toLocaleTimeString("es-MX", { hour: "numeric", minute: "2-digit", hour12: true });
+  }
+
+  function renderInvitation(fecha, hora, lugar, url) {
+    document.getElementById("outFecha").textContent = formatFecha(fecha);
+    document.getElementById("outHora").textContent = formatHora(hora);
+
+    const lugarBox = document.getElementById("lugarBox");
+    if (lugar) {
+      document.getElementById("outLugar").textContent = lugar;
+      lugarBox.classList.remove("hidden");
+    } else {
+      lugarBox.classList.add("hidden");
+    }
+
+    const shareInput = document.getElementById("shareLink");
+    shareInput.value = url;
+
+    const msg = "💌 ¡Tenemos una cita! " +
+      formatFecha(fecha) + " a las " + formatHora(hora) +
+      (lugar ? " en " + lugar : "") + " 💕 " + url;
+    document.getElementById("waLink").href = "https://wa.me/?text=" + encodeURIComponent(msg);
+  }
+
+  // ---------- Copiar link ----------
+  document.getElementById("copyBtn").addEventListener("click", function () {
+    const input = document.getElementById("shareLink");
+    input.select();
+    const btn = document.getElementById("copyBtn");
+    const done = function () { btn.textContent = "¡Copiado! ✓"; setTimeout(function () { btn.textContent = "Copiar"; }, 1800); };
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(input.value).then(done).catch(function () { document.execCommand("copy"); done(); });
+    } else {
+      document.execCommand("copy");
+      done();
+    }
+  });
+
+  // ---------- Corazones flotantes ----------
+  function launchHearts(n) {
+    const container = document.getElementById("hearts");
+    const emojis = ["💖","💕","💗","💓","❤️","💞","💘"];
+    for (let i = 0; i < n; i++) {
+      const s = document.createElement("span");
+      s.textContent = pick(emojis);
+      s.style.left = Math.random() * 100 + "vw";
+      s.style.animationDuration = (2 + Math.random() * 3) + "s";
+      s.style.fontSize = (1 + Math.random() * 1.5) + "rem";
+      container.appendChild(s);
+      setTimeout(function () { s.remove(); }, 5000);
+    }
+  }
+
+  // ---------- Fondo permanente: corazones en paralaje ----------
+  (function buildBackground() {
+    const container = document.getElementById("bgHearts");
+    const emojis = ["💖","💕","💗","💓","❤️","💞","💘","💝","🩷","💜"];
+    const layers = [
+      { cls: "layer-back",  count: 22, min: 16, max: 26 }, // lentos y chicos (atrás)
+      { cls: "layer-mid",   count: 16, min: 11, max: 18 }, // velocidad media
+      { cls: "layer-front", count: 10, min: 7,  max: 12 }  // rápidos y grandes (frente)
+    ];
+
+    layers.forEach(function (layer) {
+      for (let i = 0; i < layer.count; i++) {
+        const s = document.createElement("span");
+        s.className = layer.cls;
+        s.textContent = pick(emojis);
+        s.style.left = Math.random() * 100 + "vw";
+        const dur = layer.min + Math.random() * (layer.max - layer.min);
+        s.style.animationDuration = dur + "s";
+        s.style.animationDelay = -(Math.random() * dur) + "s"; // arranque escalonado
+        s.style.setProperty("--sway", (Math.random() * 80 - 40) + "px");
+        container.appendChild(s);
+      }
+    });
+  })();
+
+  // ---------- Si llega con query params: mostrar la invitación recibida ----------
+  (function loadFromQuery() {
+    const params = new URLSearchParams(location.search);
+    const fecha = params.get("fecha");
+    const hora = params.get("hora");
+    if (fecha && hora) {
+      const lugar = params.get("lugar") || "";
+      document.getElementById("inviteTitle").textContent = "¡Estás invitada! 💌";
+      document.getElementById("inviteSubtitle").textContent = "Alguien especial quiere verte 💕";
+      renderInvitation(fecha, hora, lugar, location.href);
+      showStep("step-invite");
+      launchHearts(40);
+    }
+  })();
+</script>
+</body>
+</html>
